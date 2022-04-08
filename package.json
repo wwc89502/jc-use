@@ -1,6 +1,6 @@
 {
   "name": "jc-use",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,5 +10,10 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.26.1"
+  },
+  "homepage": "https://github.com/wwc89502/jc-use#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wwc89502/jc-use.git"
   }
 }
