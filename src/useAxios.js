@@ -14,7 +14,7 @@ const setHeaders = (headers) => {
 
 /**
  * @description 使用axios进行异步请求
- * @returns {(function(...[*]): Promise<unknown>)|(function(...[*]):
+ * @returns {(function(...[*]): Promise<unknown>)|(function(...[*]): void)|*|{setHeaders: setHeaders}}
  * @example
  *
  * $ 替换path中的参数
