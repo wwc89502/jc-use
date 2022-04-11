@@ -29,7 +29,7 @@ export function useFetch () {
     }
     return new Proxy({}, {
         get (target, prop) {
-            const { baseURL = '', fetchHeaders } = globalConfig.config
+            const { baseURL = '', fetchHeaders = {}, apiDict = {} } = globalConfig.config
             const { method, path } = stringToPath(prop)
             const extendHandle = {
                 setHeaders
@@ -41,25 +41,39 @@ export function useFetch () {
                     let queryString = ''
                     method === 'get' && (queryString = '?' + queryToString(options.params))
                     method === 'post' && !options.body && (options.body = JSON.stringify(options.data))
-                    return new Promise((resolve, reject) => {
-                        fetch(`${baseURL}${url}${queryString}`, {
-                            method,
-                            ...options,
-                            headers: {
-                                ...fetchHeaders,
-                                ...options.headers
-                            }
-                        })
-                            .then(res => {
-                                if ([200].includes(res.status)) {
-                                    resolve(res.json())
-                                } else {
-                                    reject(res)
+                    function _fetch () {
+                        return new Promise((resolve, reject) => {
+                            fetch(`${baseURL}${url}${queryString}`, {
+                                method,
+                                ...options,
+                                headers: {
+                                    ...fetchHeaders,
+                                    ...options.headers
                                 }
                             })
-                            .catch(err => {
-                                reject(err)
-                            })
+                                .then(res => {
+                                    if ([200].includes(res.status)) {
+                                        resolve(res.json())
+                                    } else {
+                                        reject(res.json())
+                                    }
+                                })
+                                .catch(err => {
+                                    reject(err)
+                                })
+                        })
+                    }
+                    return new Promise((resolve, reject) => {
+                        _fetch().then(res => {
+                            if (apiDict.successCodes.includes(res[apiDict.code])) {
+                                resolve(res[apiDict.data])
+                            } else {
+                                apiDict.errorMsgHandle(res[apiDict.message])
+                                reject(res)
+                            }
+                        }).catch(err => {
+                            reject(err)
+                        })
                     })
                 }
             } else if (extendHandle[prop]) {

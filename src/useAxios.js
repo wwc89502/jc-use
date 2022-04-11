@@ -29,7 +29,7 @@ export function useAxios () {
     }
     return new Proxy({}, {
         get (target, prop) {
-            const { baseURL = '', axiosHeaders } = globalConfig.config
+            const { baseURL = '', axiosHeaders = {}, apiDict = {} } = globalConfig.config
             const { method, path } = stringToPath(prop)
             const extendHandle = {
                 setHeaders
@@ -50,7 +50,13 @@ export function useAxios () {
                             }
                         }).then(res => {
                             if ([200].includes(res.status)) {
-                                resolve(res.data)
+                                const resData = res.data
+                                if (apiDict.successCodes.includes(resData[apiDict.code])) {
+                                    resolve(resData[apiDict.data])
+                                } else {
+                                    apiDict.errorMsgHandle(resData[apiDict.message])
+                                    reject(resData)
+                                }
                             } else {
                                 reject(res)
                             }

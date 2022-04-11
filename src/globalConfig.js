@@ -1,6 +1,19 @@
+const defaultConfig = {
+    apiDict: {
+        code: 'code',
+        successCodes: [200],
+        data: 'data',
+        message: 'msg',
+        errorMsgHandle: (msg) => {
+            console.error(msg)
+        }
+    }
+}
 class GlobalConfig {
     constructor() {
-        this.config = {}
+        this.config = {
+            ...defaultConfig
+        }
     }
     _get(key) {
         return this.config[key]
