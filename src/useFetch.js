@@ -3,12 +3,19 @@ import stringToPath from './utils/stringToPath';
 import { globalConfig } from './globalConfig';
 
 /**
+ * @description 设置请求头
+ * @param headers
+ */
+const setHeaders = (headers) => {
+    globalConfig._extend({
+        fetchHeaders: headers
+    })
+}
+
+/**
  * @description 使用fetch进行异步请求
  * @returns {(function(...[*]): Promise<unknown>)|(function(...[*]): void)|*|{}}
  * @example
- *
- * 设置请求头
- * api.setHeaders({})
  *
  * $ 替换path中的参数
  * api.getUsers$Books(1, { params: { page: 1, size: 10 })
@@ -22,19 +29,17 @@ import { globalConfig } from './globalConfig';
  * => POST /users config
  */
 export function useFetch () {
-    const setHeaders = (headers) => {
-        globalConfig._extend({
-            fetchHeaders: headers
-        })
-    }
-    return new Proxy({}, {
+    return new Proxy({
+        setHeaders
+    }, {
         get (target, prop) {
             const { baseURL = '', fetchHeaders = {}, apiDict = {} } = globalConfig.config
             const { method, path } = stringToPath(prop)
-            const extendHandle = {
-                setHeaders
-            }
-            if (['get', 'post', 'put', 'patch', 'delete'].includes(method)) {
+            if (!!target[prop]) {
+                return (...args) => {
+                    target[prop](...args)
+                }
+            } else if (['get', 'post', 'put', 'patch', 'delete'].includes(method)) {
                 return (...args) => {
                     const url = path.replace(/\$/g, () => args.shift())
                     const options = args.shift() || {}
@@ -75,10 +80,6 @@ export function useFetch () {
                             reject(err)
                         })
                     })
-                }
-            } else if (extendHandle[prop]) {
-                return (...args) => {
-                    extendHandle[prop](...args)
                 }
             }
         }
