@@ -7,7 +7,7 @@ import { globalConfig } from './globalConfig';
  * @param headers
  */
 const setFetchHeaders = (headers: object) => {
-    globalConfig._extend({
+    globalConfig.setData({
         fetchHeaders: headers
     })
 }
@@ -35,7 +35,7 @@ export function useFetch () {
         setFetchHeaders
     }, {
         get (target: any, prop: string) {
-            const { baseURL = '', fetchHeaders = {}, apiDict = {} } = globalConfig.config
+            const { baseURL = '', fetchHeaders = {}, apiDict = {} } = globalConfig.value
             const { method, path } = stringToPath(prop)
             if (!!target[prop]) {
                 return (...args: any[]) => {

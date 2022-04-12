@@ -7,7 +7,7 @@ import { globalConfig } from './globalConfig';
  * @param headers
  */
 const setAxiosHeaders = (headers: object) => {
-    globalConfig._extend({
+    globalConfig.setData({
         axiosHeaders: headers
     })
 }
@@ -35,7 +35,7 @@ export function useAxios () {
         setAxiosHeaders
     }, {
         get (target: any, prop: string) {
-            const { baseURL = '', axiosHeaders = {}, apiDict = {} } = globalConfig.config
+            const { baseURL = '', axiosHeaders = {}, apiDict = {} } = globalConfig.value
             const { method, path } = stringToPath(prop)
             if (!!target[prop]) {
                 return (...args: any[]) => {
