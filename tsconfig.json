@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es2016",
     "module": "commonjs",
-    "strict": true,
-    "baseUrl": "./",
+    "declaration": true,
     "outDir": "./lib",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "importHelpers": true,
-  }
+    "strict": true,
+    "lib": ["dom", "es2016"]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

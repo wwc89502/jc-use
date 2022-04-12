@@ -9,7 +9,7 @@
 import { useFetch } from '../../../../index'
 
 const api = useFetch()
-api.setHeaders({
+api.setFetchHeaders({
   Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDk2NzU4OTYsInVzZXJfbmFtZSI6ImFkbWluIiwianRpIjoiZjE1MjljODgtYmVhZS00NGM0LWE2ZjEtYWM1MjdhZTNiMWM1IiwiY2xpZW50X2lkIjoiZHViaGUtY2xpZW50Iiwic2NvcGUiOlsiYWxsIl19.4t7vrFLccYFbI8nwywdwbkJIo_ntwsbZ07Lsvmf5Co0'
 })
 

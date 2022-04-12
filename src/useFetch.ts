@@ -6,18 +6,17 @@ import { globalConfig } from './globalConfig';
  * @description 设置请求头
  * @param headers
  */
-const setHeaders = (headers: object) => {
+const setFetchHeaders = (headers: object) => {
     globalConfig._extend({
         fetchHeaders: headers
     })
 }
 
-interface Options {
+interface ObjectAny {
     [key: string]: any
 }
 /**
  * @description 使用fetch进行异步请求
- * @returns {(function(...[*]): Promise<unknown>)|(function(...[*]): void)|*|{setHeaders: setHeaders}}
  * @example
  *
  * $ 替换path中的参数
@@ -33,7 +32,7 @@ interface Options {
  */
 export function useFetch () {
     return new Proxy({
-        setHeaders
+        setFetchHeaders
     }, {
         get (target: any, prop: string) {
             const { baseURL = '', fetchHeaders = {}, apiDict = {} } = globalConfig.config
@@ -46,7 +45,7 @@ export function useFetch () {
                 return (...args: any[]) => {
                     const argsShift = args.shift()
                     const url = path.replace(/\$/g, () => argsShift)
-                    const options: Options = argsShift || {}
+                    const options: ObjectAny = argsShift || {}
                     let queryString = ''
                     method === 'get' && (queryString = '?' + queryToString(options.params))
                     method === 'post' && !options.body && (options.body = JSON.stringify(options.data))
@@ -60,7 +59,7 @@ export function useFetch () {
                                     ...options.headers
                                 }
                             })
-                                .then(res => {
+                                .then((res: Response) => {
                                     if ([200].includes(res.status)) {
                                         resolve(res.json())
                                     } else {

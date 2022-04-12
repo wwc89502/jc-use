@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from "axios";
 import stringToPath from './utils/stringToPath';
 import { globalConfig } from './globalConfig';
 
@@ -6,18 +6,17 @@ import { globalConfig } from './globalConfig';
  * @description 设置请求头
  * @param headers
  */
-const setHeaders = (headers: object) => {
+const setAxiosHeaders = (headers: object) => {
     globalConfig._extend({
         axiosHeaders: headers
     })
 }
 
-interface Options {
+interface ObjectAny {
     [key: string]: any
 }
 /**
  * @description 使用axios进行异步请求
- * @returns {(function(...[*]): Promise<unknown>)|(function(...[*]): void)|*|{setHeaders: setHeaders}}
  * @example
  *
  * $ 替换path中的参数
@@ -33,7 +32,7 @@ interface Options {
  */
 export function useAxios () {
     return new Proxy({
-        setHeaders
+        setAxiosHeaders
     }, {
         get (target: any, prop: string) {
             const { baseURL = '', axiosHeaders = {}, apiDict = {} } = globalConfig.config
@@ -46,9 +45,9 @@ export function useAxios () {
                 return (...args: any[]) => {
                     const argsShift = args.shift()
                     const url = path.replace(/\$/g, () => argsShift)
-                    const options: Options = argsShift || {}
+                    const options: ObjectAny = argsShift || {}
                     return new Promise((resolve: any, reject: any) => {
-                        const config: Options = {
+                        const config: ObjectAny = {
                             baseURL,
                             method,
                             url,
@@ -58,7 +57,7 @@ export function useAxios () {
                                 ...options.headers
                             }
                         }
-                        axios(config).then(res => {
+                        axios(config).then((res: AxiosResponse) => {
                             if ([200].includes(res.status)) {
                                 const resData = res.data
                                 if (apiDict.successCodes.includes(resData[apiDict.code])) {
