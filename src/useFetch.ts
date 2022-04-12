@@ -6,12 +6,15 @@ import { globalConfig } from './globalConfig';
  * @description 设置请求头
  * @param headers
  */
-const setHeaders = (headers) => {
+const setHeaders = (headers: object) => {
     globalConfig._extend({
         fetchHeaders: headers
     })
 }
 
+interface Options {
+    [key: string]: any
+}
 /**
  * @description 使用fetch进行异步请求
  * @returns {(function(...[*]): Promise<unknown>)|(function(...[*]): void)|*|{setHeaders: setHeaders}}
@@ -32,22 +35,23 @@ export function useFetch () {
     return new Proxy({
         setHeaders
     }, {
-        get (target, prop) {
+        get (target: any, prop: string) {
             const { baseURL = '', fetchHeaders = {}, apiDict = {} } = globalConfig.config
             const { method, path } = stringToPath(prop)
             if (!!target[prop]) {
-                return (...args) => {
+                return (...args: any[]) => {
                     target[prop](...args)
                 }
             } else if (['get', 'post', 'put', 'patch', 'delete'].includes(method)) {
-                return (...args) => {
-                    const url = path.replace(/\$/g, () => args.shift())
-                    const options = args.shift() || {}
+                return (...args: any[]) => {
+                    const argsShift = args.shift()
+                    const url = path.replace(/\$/g, () => argsShift)
+                    const options: Options = argsShift || {}
                     let queryString = ''
                     method === 'get' && (queryString = '?' + queryToString(options.params))
                     method === 'post' && !options.body && (options.body = JSON.stringify(options.data))
                     function _fetch () {
-                        return new Promise((resolve, reject) => {
+                        return new Promise((resolve: any, reject: any) => {
                             fetch(`${baseURL}${url}${queryString}`, {
                                 method,
                                 ...options,
@@ -68,12 +72,16 @@ export function useFetch () {
                                 })
                         })
                     }
-                    return new Promise((resolve, reject) => {
-                        _fetch().then(res => {
+                    return new Promise((resolve: any, reject: any) => {
+                        _fetch().then((res: any) => {
                             if (apiDict.successCodes.includes(res[apiDict.code])) {
-                                resolve(res[apiDict.data])
+                                if (res[apiDict.data]) {
+                                    resolve(res[apiDict.data])
+                                } else {
+                                    resolve(res)
+                                }
                             } else {
-                                apiDict.errorMsgHandle(res[apiDict.message])
+                                res[apiDict.message] && apiDict.errorMsgHandle(res[apiDict.message])
                                 reject(res)
                             }
                         }).catch(err => {
@@ -81,6 +89,8 @@ export function useFetch () {
                         })
                     })
                 }
+            } else {
+                return false
             }
         }
     })

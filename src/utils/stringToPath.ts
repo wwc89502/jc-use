@@ -1,5 +1,6 @@
-export default function (prop) {
-    const method = /^[a-z]+/.exec(prop)[0]
+export default function (prop: string) {
+    const execProp = /^[a-z]+/.exec(prop) || []
+    const method = execProp[0]
     let path = '/' + prop
         .substring(method.length)
         .replace(/([a-z0-9])([A-Z])/g, '$1/$2')

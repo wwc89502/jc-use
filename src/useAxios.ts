@@ -6,12 +6,15 @@ import { globalConfig } from './globalConfig';
  * @description 设置请求头
  * @param headers
  */
-const setHeaders = (headers) => {
+const setHeaders = (headers: object) => {
     globalConfig._extend({
         axiosHeaders: headers
     })
 }
 
+interface Options {
+    [key: string]: any
+}
 /**
  * @description 使用axios进行异步请求
  * @returns {(function(...[*]): Promise<unknown>)|(function(...[*]): void)|*|{setHeaders: setHeaders}}
@@ -32,19 +35,20 @@ export function useAxios () {
     return new Proxy({
         setHeaders
     }, {
-        get (target, prop) {
+        get (target: any, prop: string) {
             const { baseURL = '', axiosHeaders = {}, apiDict = {} } = globalConfig.config
             const { method, path } = stringToPath(prop)
             if (!!target[prop]) {
-                return (...args) => {
+                return (...args: any[]) => {
                     target[prop](...args)
                 }
             } else if (['get', 'post', 'put', 'patch', 'delete'].includes(method)) {
-                return (...args) => {
-                    const url = path.replace(/\$/g, () => args.shift())
-                    const options = args.shift() || {}
-                    return new Promise((resolve, reject) => {
-                        axios({
+                return (...args: any[]) => {
+                    const argsShift = args.shift()
+                    const url = path.replace(/\$/g, () => argsShift)
+                    const options: Options = argsShift || {}
+                    return new Promise((resolve: any, reject: any) => {
+                        const config: Options = {
                             baseURL,
                             method,
                             url,
@@ -53,13 +57,18 @@ export function useAxios () {
                                 ...axiosHeaders,
                                 ...options.headers
                             }
-                        }).then(res => {
+                        }
+                        axios(config).then(res => {
                             if ([200].includes(res.status)) {
                                 const resData = res.data
                                 if (apiDict.successCodes.includes(resData[apiDict.code])) {
-                                    resolve(resData[apiDict.data])
+                                    if (resData[apiDict.data]) {
+                                        resolve(resData[apiDict.data])
+                                    } else {
+                                        resolve(resData)
+                                    }
                                 } else {
-                                    apiDict.errorMsgHandle(resData[apiDict.message])
+                                    resData[apiDict.message] && apiDict.errorMsgHandle(resData[apiDict.message])
                                     reject(resData)
                                 }
                             } else {
@@ -70,6 +79,8 @@ export function useAxios () {
                         })
                     })
                 }
+            } else {
+                return false
             }
         }
     })

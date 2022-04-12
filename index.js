@@ -1,6 +1,6 @@
-import { globalConfig } from './src/globalConfig';
-import { useAxios } from './src/useAxios';
-import { useFetch } from './src/useFetch';
+import { globalConfig } from './lib/globalConfig';
+import { useAxios } from './lib/useAxios';
+import { useFetch } from './lib/useFetch';
 
 export {
     globalConfig,

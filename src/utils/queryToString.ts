@@ -1,5 +1,5 @@
-export default function (query) {
-    let result = ''
+export default function (query: any) {
+    let result: string = ''
     for (const queryElement in query) {
         result += `${queryElement}=${query[queryElement]}&`
     }
