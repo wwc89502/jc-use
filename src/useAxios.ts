@@ -17,25 +17,14 @@ interface ObjectAny {
 }
 /**
  * @description 使用axios进行异步请求
- * @example
- *
- * $ 替换path中的参数
- * api.getUsers$Books(1, { params: { page: 1, size: 10 })
- * => GET /users/1/books config
- *
- * $$ 保持path中驼峰命名单词不全被替换为小写
- * api.getUsersGroup$$Query({ params: { page: 1, size: 10 })
- * => GET /users/groupQuery config
- *
- * api.postUsers({ data: { name: 'jc', age: 18 } })
- * => POST /users config
+ * @usage api.apiString([$,] config: {})
  */
 export function useAxios () {
     return new Proxy({
         setAxiosHeaders
     }, {
         get (target: any, prop: string) {
-            const { baseURL = '', axiosHeaders = {}, apiDict = {} } = globalConfig.value
+            const { baseURL, axiosHeaders, apiDict } = globalConfig.value
             const { method, path } = stringToPath(prop)
             if (!!target[prop]) {
                 return (...args: any[]) => {
@@ -60,7 +49,8 @@ export function useAxios () {
                         axios(config).then((res: AxiosResponse) => {
                             if ([200].includes(res.status)) {
                                 const resData = res.data
-                                if (apiDict.successCodes.includes(resData[apiDict.code])) {
+                                const successCodes: any[] = apiDict.successCodes
+                                if (successCodes.includes(resData[apiDict.code])) {
                                     if (resData[apiDict.data]) {
                                         resolve(resData[apiDict.data])
                                     } else {
