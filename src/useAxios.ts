@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import stringToPath from './utils/stringToPath';
+import promiseData from './utils/promiseData';
 import { globalConfig } from './globalConfig';
 
 /**
@@ -26,7 +27,7 @@ export function useAxios() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, axiosHeaders, apiDict } = globalConfig.value;
+        const { baseURL, axiosHeaders } = globalConfig.value;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {
@@ -52,18 +53,7 @@ export function useAxios() {
                 .then((res: AxiosResponse) => {
                   if ([200].includes(res.status)) {
                     const resData = res.data;
-                    const successCodes: any[] = apiDict.successCodes;
-                    if (successCodes.includes(resData[apiDict.code])) {
-                      if (resData[apiDict.data]) {
-                        resolve(resData[apiDict.data]);
-                      } else {
-                        resolve(resData);
-                      }
-                    } else {
-                      const msg: string = resData[apiDict.message];
-                      if (msg) apiDict.errorMsgHandle(msg);
-                      reject(resData);
-                    }
+                    promiseData(resData, resolve, reject);
                   } else {
                     reject(res);
                   }

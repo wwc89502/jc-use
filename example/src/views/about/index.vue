@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { useAxios } from '../../../../index'
+import { useAxios } from 'jc-use'
 
 const api = useAxios()
 api.setAxiosHeaders({

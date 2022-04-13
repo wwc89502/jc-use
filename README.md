@@ -18,6 +18,7 @@ globalConfig.setData({
   apiDict: {
     code: 'code', // 接口返回的状态码的字段名
     successCodes: [200], // 接口请求成功的状态码集合
+    noAllowCodes: [401], // 无接口请求权限的状态码集合
     data: 'data', // 接口返回数据的字段名
     message: 'msg', // 接口返回报错信息的字段名
     // 请求失败时的回调

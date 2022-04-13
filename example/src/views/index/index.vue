@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { useFetch } from '../../../../index'
+import { useFetch } from 'jc-use'
 
 const api = useFetch()
 api.setFetchHeaders({

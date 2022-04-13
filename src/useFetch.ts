@@ -1,5 +1,6 @@
 import queryToString from './utils/queryToString';
 import stringToPath from './utils/stringToPath';
+import promiseData from './utils/promiseData';
 import { globalConfig } from './globalConfig';
 
 /**
@@ -64,19 +65,8 @@ export function useFetch() {
             }
             return new Promise((resolve: any, reject: any) => {
               _fetch()
-                .then((res: any) => {
-                  const successCodes: any[] = apiDict.successCodes;
-                  if (successCodes.includes(res[apiDict.code])) {
-                    if (res[apiDict.data]) {
-                      resolve(res[apiDict.data]);
-                    } else {
-                      resolve(res);
-                    }
-                  } else {
-                    const msg: string = res[apiDict.message];
-                    if (msg) apiDict.errorMsgHandle(msg);
-                    reject(res);
-                  }
+                .then((resData: any) => {
+                  promiseData(resData, resolve, reject);
                 })
                 .catch((err) => {
                   reject(err);
