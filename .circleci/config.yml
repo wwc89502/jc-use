@@ -1,6 +1,10 @@
 version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+
 workflows:
-  jobs:
-    build:
-      steps:
-        - run: npm run tesc
+  example-workflow:
+    jobs:
+      - node/run:
+          npm-run: tsc
