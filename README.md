@@ -1,4 +1,8 @@
-[TOC]
+[![CircleCI](https://circleci.com/gh/wwc89502/jc-use/tree/master.svg?style=svg)](https://circleci.com/gh/wwc89502/jc-use/tree/master) 
+[![npm package](https://img.shields.io/npm/v/jc-use.svg?style=flat-square)](https://www.npmjs.com/package/jc-use) 
+[![NPM downloads](http://img.shields.io/npm/dm/jc-use.svg?style=flat-square)](https://www.npmjs.com/package/jc-use) 
+[![License](https://img.shields.io/npm/l/jc-use.svg)](https://www.npmjs.com/package/jc-use) 
+
 ## jc-use
 > 使用 useHooks 的方式处理问题
 
