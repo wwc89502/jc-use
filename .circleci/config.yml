@@ -7,6 +7,4 @@ workflows:
   example-workflow:
     jobs:
       - node/run:
-          npm-run: lint
-      - node/run:
-          npm-run: tsc
+          npm-run: build
