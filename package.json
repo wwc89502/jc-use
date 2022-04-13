@@ -7,7 +7,7 @@
     "tsc": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
-    "build": ""
+    "build": "npm run lint && npm run format && npm run tsc"
   },
   "author": "JChen",
   "license": "MIT",
