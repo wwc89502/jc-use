@@ -1,6 +1,6 @@
 {
   "name": "jc-use",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -26,5 +26,7 @@
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.6.3"
   },
-  "files": ["lib/**/*"]
+  "files": [
+    "lib/**/*"
+  ]
 }
