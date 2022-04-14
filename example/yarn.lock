@@ -4112,8 +4112,10 @@ javascript-stringify@^2.0.1:
   resolved "https://registry.npmmirror.com/javascript-stringify/-/javascript-stringify-2.1.0.tgz#27c76539be14d8bd128219a2d731b09337904e79"
   integrity sha512-JVAfqNPTvNq3sB/VHQJAFxN/sPgKnsKrCwyRt15zwNCdrMMJDdcEOdubuy+DuJYYdm0ox1J4uzEuYKkN+9yhVg==
 
-"jc-use@file:..":
-  version "0.0.13"
+jc-use@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/jc-use/-/jc-use-0.1.2.tgz#17046ff28ed0d4644750bbd04d57b8d002084364"
+  integrity sha512-BFW+wOi5Gh/yeVEO0dySVpFeYvUGbl/rgZoCHxlqGwoGlzOqJmGiUHkEr/46Ci9K88QUKBRW4hEC7SMc+OPSuQ==
   dependencies:
     axios "^0.26.1"
 
