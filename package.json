@@ -1,7 +1,7 @@
 {
   "name": "jc-use",
   "version": "0.0.15",
-  "description": "",
+  "description": "使用 useHooks 的方式处理问题",
   "main": "index.js",
   "scripts": {
     "test": "echo \"No test specified\"",
@@ -10,7 +10,7 @@
     "lint": "tslint -p tsconfig.json",
     "build": "npm run lint && npm run format && npm run tsc"
   },
-  "author": "JChen",
+  "author": "JChen <wwc89502@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.26.1"
