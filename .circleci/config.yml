@@ -4,7 +4,8 @@ orbs:
   node: circleci/node@5.0.2
 
 workflows:
-  example-workflow:
+  build-workflow:
     jobs:
       - node/run:
-          npm-run: build
+          yarn-run: build
+
