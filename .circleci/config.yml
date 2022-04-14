@@ -7,5 +7,5 @@ workflows:
   build-workflow:
     jobs:
       - node/run:
-          yarn-run: build
+          npm-run: build
 
