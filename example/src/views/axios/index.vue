@@ -14,7 +14,7 @@ api.setAxiosHeaders({
 })
 
 const getData = () => {
-  api.getApiV1DataLabel$$GroupQuery({
+  api.getApiV1DataLabel_GroupQuery({
     params: {
       current: 1,
       size: 10,

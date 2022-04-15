@@ -29,6 +29,7 @@ globalConfig.setData({
     }
   }
 })
+console.log(globalConfig.baseURL)
 ```
 
 #### useAxios
@@ -48,9 +49,9 @@ api.setAxiosHeaders({ ...headers })
 const userId = 1
 api.getUsers$Books(userId, { params: { page: 1, size: 10 })
 
-// $$ 保持$$后的大写字母不变(驼峰命名)
+// _ 保持_后的大写字母不变(驼峰命名)
 // GET /users/groupQuery =>
-api.getUsersGroup$$Query({ params: { page: 1, size: 10 })
+api.getUsersGroup_Query({ params: { page: 1, size: 10 })
 
 // POST /users =>
 api.postUsers({ data: { name: 'jc', age: 18 } })

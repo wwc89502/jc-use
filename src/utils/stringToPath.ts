@@ -10,7 +10,7 @@ export default function (prop: string) {
       .map((item) => {
         const newItem = item
           .toLowerCase()
-          .split('$$')
+          .split('_')
           .map((cItem, cIndex) => {
             if (cIndex === 0) {
               return cItem;
