@@ -5,6 +5,8 @@
 
 ## jc-use
 > 使用 useHooks 的方式处理问题
+>
+> `globalConfig` 保存了后面 `Hooks` 使用的一些设置。
 
 ```js
 // main.js
@@ -30,7 +32,11 @@ globalConfig.setData({
 ```
 
 #### useAxios
+
+> 使用Axios发送http请求
+>
 > api.apiString([$,] config: {})
+
 ```js
 const api = useAxios()
 
@@ -51,6 +57,11 @@ api.postUsers({ data: { name: 'jc', age: 18 } })
 ```
 
 #### useFetch
+
+>使用Fetch发送http请求，方法同上
+>
+>api.apiString([$,] config: {})
+
 ```js
 const api = useFetch()
 
@@ -61,6 +72,11 @@ api.setFetchHeaders({ ...headers })
 ```
 
 #### usePoll
+
+> 轮询
+>
+> 相较于直接使用 `setInterval` , `usePoll` 中使用了 `debounce` 防抖，轮询http请求时，会在请求成功后延迟一定的时间进行轮询。
+
 ```js
 const poll = usePoll()
 
