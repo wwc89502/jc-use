@@ -42,7 +42,7 @@ api.setAxiosHeaders({ ...headers })
 const userId = 1
 api.getUsers$Books(userId, { params: { page: 1, size: 10 })
 
-// $$ 保持_后的大写字母不变(驼峰命名)
+// $$ 保持$$后的大写字母不变(驼峰命名)
 // GET /users/groupQuery =>
 api.getUsersGroup$$Query({ params: { page: 1, size: 10 })
 
@@ -58,4 +58,19 @@ const api = useFetch()
 api.setFetchHeaders({ ...headers })
 
 // http请求同 useAxios
+```
+
+#### usePoll
+```js
+const poll = usePoll()
+
+// 开始轮询
+let count = 0
+poll.begin(async () => {
+  count++
+  console.log(count)
+}, 3000)
+
+// 停止轮询
+poll.stop()
 ```

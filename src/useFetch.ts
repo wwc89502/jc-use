@@ -27,7 +27,7 @@ export function useFetch() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, fetchHeaders, apiDict } = globalConfig.value;
+        const { baseURL, fetchHeaders } = globalConfig.value;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {

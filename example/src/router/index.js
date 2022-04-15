@@ -1,17 +1,23 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Index from '../views/index'
-import About from '../views/about'
+import Fetch from '../views/fetch'
+import Axios from '../views/axios'
+import Poll from '../views/poll'
 
 const routes = [
   {
     path: '/',
-    name: 'index',
-    component: Index
+    name: 'fetch',
+    component: Fetch
   },
   {
-    path: '/about',
-    name: 'about',
-    component: About
+    path: '/axios',
+    name: 'axios',
+    component: Axios
+  },
+  {
+    path: '/poll',
+    name: 'poll',
+    component: Poll
   }
 ]
 

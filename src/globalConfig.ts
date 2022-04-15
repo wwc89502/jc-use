@@ -25,26 +25,23 @@ const apiDict = {
     console.error(msg);
   },
 };
-export const globalConfig: GlobalConfig = new Proxy(
-  {
-    value: {
-      baseURL: '',
-      axiosHeaders: {},
-      fetchHeaders: {},
-      apiDict,
-    },
-    setData: (config: any) => {
-      for (const valueKey in config) {
-        if (Object.prototype.toString.call(config[valueKey]) === '[object Object]') {
-          globalConfig.value[valueKey] = {
-            ...globalConfig.value[valueKey],
-            ...config[valueKey],
-          };
-        } else {
-          globalConfig.value[valueKey] = config[valueKey];
-        }
-      }
-    },
+export const globalConfig: GlobalConfig = {
+  value: {
+    baseURL: '',
+    axiosHeaders: {},
+    fetchHeaders: {},
+    apiDict,
   },
-  {},
-);
+  setData: (config: any) => {
+    for (const valueKey in config) {
+      if (Object.prototype.toString.call(config[valueKey]) === '[object Object]') {
+        globalConfig.value[valueKey] = {
+          ...globalConfig.value[valueKey],
+          ...config[valueKey],
+        };
+      } else {
+        globalConfig.value[valueKey] = config[valueKey];
+      }
+    }
+  },
+};

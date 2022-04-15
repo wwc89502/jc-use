@@ -2,13 +2,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { globalConfig } from 'jc-use'
+import { globalConfig } from '../../index'
 
 globalConfig.setData({
-  baseURL: 'http://10.101.114.5:8800',
-  apiDict: {
-    noAllowCodes: [403]
-  }
+  baseURL: 'http://10.101.114.5:8800'
 })
 console.log(globalConfig.value)
 

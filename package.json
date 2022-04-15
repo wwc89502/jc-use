@@ -13,7 +13,9 @@
   "author": "JChen <wwc89502@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.26.1"
+    "@types/lodash": "^4.14.181",
+    "axios": "^0.26.1",
+    "lodash": "^4.17.21"
   },
   "homepage": "https://github.com/wwc89502/jc-use#readme",
   "repository": {
