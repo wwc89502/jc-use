@@ -8,6 +8,6 @@
     "strict": true,
     "lib": ["dom", "es2016"]
   },
-  "include": ["src"],
+  "include": ["src", "index.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,9 +1,9 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import Fetch from '../views/fetch'
-import Axios from '../views/axios'
-import Poll from '../views/poll'
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import Fetch from '../views/fetch/index.vue'
+import Axios from '../views/axios/index.vue'
+import Poll from '../views/poll/index.vue'
 
-const routes = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'fetch',

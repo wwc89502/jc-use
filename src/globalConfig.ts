@@ -1,15 +1,15 @@
 interface GlobalConfig {
   baseURL: string;
-  apiDict: object;
-  axiosHeaders: {};
-  fetchHeaders: {};
+  apiDict: ProxyHandler<object>;
+  axiosHeaders: ProxyHandler<object>;
+  fetchHeaders: ProxyHandler<object>;
   [key: string]: any;
 }
 
 const globalConfigValue: GlobalConfig = Object.preventExtensions({
   baseURL: '',
-  axiosHeaders: {},
-  fetchHeaders: {},
+  axiosHeaders: freezyObj({}),
+  fetchHeaders: freezyObj({}),
   apiDict: freezyObj({
     code: 'code', // 接口返回的状态码的字段名
     successCodes: [200], // 接口请求成功的状态码集合

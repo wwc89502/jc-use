@@ -2,7 +2,7 @@
   "name": "jc-use",
   "version": "0.2.1",
   "description": "使用 useHooks 的方式处理问题",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"No test specified\"",
     "tsc": "tsc",
