@@ -27,7 +27,7 @@ export function useAxios() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, axiosHeaders } = globalConfig.value;
+        const { baseURL, axiosHeaders } = globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {

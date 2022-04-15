@@ -1,7 +1,7 @@
 import { globalConfig } from '../globalConfig';
 
 export default function (resData: any, resolve: any, reject: any) {
-  const { successCodes, noAllowCodes, message, code, data, errorMsgHandle }: any = globalConfig.value.apiDict;
+  const { successCodes, noAllowCodes, message, code, data, errorMsgHandle }: any = globalConfig.apiDict;
   if (successCodes.includes(resData[code])) {
     if (resData[data]) {
       resolve(resData[data]);

@@ -27,7 +27,7 @@ export function useFetch() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, fetchHeaders } = globalConfig.value;
+        const { baseURL, fetchHeaders } = globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {
@@ -55,7 +55,7 @@ export function useFetch() {
                     if ([200].includes(res.status)) {
                       resolve(res.json());
                     } else {
-                      reject(res.json());
+                      reject(res);
                     }
                   })
                   .catch((err) => {
