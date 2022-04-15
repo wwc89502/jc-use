@@ -5,8 +5,16 @@
 
 ## jc-use
 > 使用 useHooks 的方式处理问题
->
-> `globalConfig` 保存了后面 `Hooks` 使用的一些设置。
+
+```powershell
+yarn add jc-use
+```
+
+
+
+#### globalConfig
+
+> `globalConfig` 保存了后面 `Hooks` 使用的一些配置。
 
 ```js
 // main.js
@@ -31,6 +39,8 @@ globalConfig.setData({
 })
 console.log(globalConfig.baseURL)
 ```
+
+
 
 #### useAxios
 
@@ -57,6 +67,8 @@ api.getUsersGroup_Query({ params: { page: 1, size: 10 })
 api.postUsers({ data: { name: 'jc', age: 18 } })
 ```
 
+
+
 #### useFetch
 
 >使用Fetch发送http请求，方法同上
@@ -71,6 +83,8 @@ api.setFetchHeaders({ ...headers })
 
 // http请求同 useAxios
 ```
+
+
 
 #### usePoll
 
