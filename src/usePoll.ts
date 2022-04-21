@@ -16,7 +16,7 @@ export function usePoll() {
       (async function doPoll() {
         await pollHandle?.();
         pollTimer = setTimeout(doPoll, wait);
-      })()
+      })();
     },
     /**
      * @description 停止轮询
