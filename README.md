@@ -90,7 +90,7 @@ api.setFetchHeaders({ ...headers })
 
 > 轮询
 >
-> 相较于直接使用 `setInterval` , `usePoll` 中使用了 `debounce` 防抖，轮询http请求时，会在请求成功后延迟一定的时间进行轮询。
+> 相较于直接使用 `setInterval` , `usePoll` 在轮询异步任务时，会在一次完成后才会延迟一定的时间进行下一次调用。
 
 ```js
 const poll = usePoll()
