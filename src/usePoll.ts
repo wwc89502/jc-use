@@ -11,7 +11,7 @@ export function usePoll() {
   const stop = () => {
     clearTimeout(pollTimer);
     pollTimer = null;
-  }
+  };
   /**
    * @description 开始轮询
    * @param pollHandle 需要轮询的函数
@@ -23,9 +23,9 @@ export function usePoll() {
       await pollHandle?.();
       pollTimer = setTimeout(doPoll, wait);
     })();
-  }
+  };
   return {
     begin,
-    stop
+    stop,
   };
 }

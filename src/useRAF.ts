@@ -7,51 +7,51 @@ export function useRAF(render: any) {
   const animLoop = (delay: any) => {
     render(delay);
     rAFId = requestAnimationFrame(animLoop);
-  }
+  };
   /**
    * @description 停止动画
    */
   const stop = () => {
     cancelAnimationFrame(rAFId);
     rAFId = null;
-  }
+  };
   /**
    * @description 开始动画
    */
   const begin = () => {
-    if (rAFId) stop()
+    if (rAFId) stop();
     requestAnimationFrame(animLoop);
-  }
+  };
   /**
    * @description 获取Fps
    */
   const getFps = () => {
-    let count = 0
-    const fpsArr: number[] = []
-    let fpsRAFId = 0
-    let perDelay: any = 0
-    return new Promise(resolve => {
+    let count = 0;
+    const fpsArr: number[] = [];
+    let fpsRAFId = 0;
+    let perDelay: any = 0;
+    return new Promise((resolve) => {
       (function fpsHandle(delay: any) {
-        count += 1
-        fpsArr.push(1000 / (delay - perDelay))
-        perDelay = delay
+        count += 1;
+        fpsArr.push(1000 / (delay - perDelay));
+        perDelay = delay;
         fpsRAFId = requestAnimationFrame(fpsHandle);
-        if (count === (20 + 2)) {
+        if (count === 20 + 2) {
           const fps20Sum = fpsArr.slice(2).reduce((prev, curr) => prev + curr);
-          const fps = Math.round(fps20Sum / 20)
-          const stepRate = 60 / fps
+          const fps = Math.round(fps20Sum / 20);
+          const stepRate = 60 / fps;
           resolve({
             fps,
-            stepRate
+            stepRate,
           });
           cancelAnimationFrame(fpsRAFId);
         }
       })(1);
-    })
-  }
+    });
+  };
   return {
     begin,
     stop,
-    getFps
+    getFps,
   };
 }
