@@ -1,4 +1,4 @@
-import queryToString from './utils/queryToString';
+import objectToQueryString from './utils/objectToQueryString';
 import stringToPath from './utils/stringToPath';
 import promiseData from './utils/promiseData';
 import { globalConfig } from './globalConfig';
@@ -39,7 +39,7 @@ export function useFetch() {
             const url = path.replace(/\$/g, () => argsShift);
             const options: ObjectAny = argsShift || {};
             let queryString = '';
-            if (method === 'get') queryString = '?' + queryToString(options.params);
+            if (method === 'get') queryString = objectToQueryString(options.params);
             if (method === 'post' && !options.body) options.body = JSON.stringify(options.data);
             function _fetch() {
               return new Promise((resolve: any, reject: any) => {

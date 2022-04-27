@@ -105,3 +105,25 @@ poll.begin(async () => {
 // 停止轮询
 poll.stop()
 ```
+
+
+
+#### useRAF
+
+> 更简单的使用 `requestAnimationFrame` 来做动画
+>
+
+```js
+const stepRate = ref(0)
+const render = () => {}
+const rAF = useRAF(render)
+
+// 获取浏览器刷新率，返回刷新率fps及步进倍率(相较于60Hz)
+rAF.getFps().then(res => {
+  stepRate.value = res.stepRate
+  // 开始动画，执行 `render` 函数
+  rAF.begin()
+})
+// 停止动画
+rAF.stop()
+```
