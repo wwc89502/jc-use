@@ -1,13 +1,9 @@
 /**
  * @description 使用 requestAnimationFrame 执行动画
- * @param render 动画渲染函数
+ * @param render 动画渲染函数 返回 stop 方法
  */
 export function useRAF(render: any) {
   let rAFId: any = null;
-  const animLoop = (delay: any) => {
-    render(delay);
-    rAFId = requestAnimationFrame(animLoop);
-  };
   /**
    * @description 停止动画
    */
@@ -15,12 +11,16 @@ export function useRAF(render: any) {
     cancelAnimationFrame(rAFId);
     rAFId = null;
   };
+  const animLoop = () => {
+    rAFId = requestAnimationFrame(animLoop);
+    render({ stop });
+  };
   /**
    * @description 开始动画
    */
   const begin = () => {
     if (rAFId) stop();
-    requestAnimationFrame(animLoop);
+    rAFId = requestAnimationFrame(animLoop);
   };
   /**
    * @description 获取Fps

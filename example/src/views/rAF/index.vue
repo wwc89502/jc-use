@@ -2,7 +2,7 @@
   <div class="about">
     <button @click="begin">begin</button>
     <button @click="stop">stop</button>
-    <div class="block" :style="{ left: `${left}px` }">{{stepRate}}</div>
+    <div class="block" :style="{ left: `${left}px` }">{{ stepRate }} | {{ count }}</div>
   </div>
 </template>
 
@@ -13,16 +13,22 @@ import { useRAF } from '../../../../index'
 let flag = true
 const stepRate = ref(0)
 const left = ref(0)
-function render () {
-  const step = 2 * stepRate.value
+const count = ref(0)
+const render = (rAFs) => {
+  const step = 4 * stepRate.value
   if (flag) {
-    if (left.value >= 400) {
+    if (left.value >= 200) {
       flag = false
+      count.value += 1
     }
     left.value += step
   } else {
     if (left.value <= 0) {
       flag = true
+      if (count.value >= 2) {
+        rAFs.stop()
+        return
+      }
     }
     left.value -= step
   }
@@ -31,6 +37,7 @@ const rAF = useRAF(render)
 const begin = () => {
   rAF.getFps().then(res => {
     stepRate.value = res.stepRate
+    count.value = 0
     rAF.begin()
   })
 }

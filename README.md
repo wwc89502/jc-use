@@ -115,15 +115,23 @@ poll.stop()
 
 ```js
 const stepRate = ref(0)
-const render = () => {}
+const render = ({ stop }) => {
+  // ...
+  if (...) {
+    // 根据条件停止动画
+    stop()
+  }
+  // ...
+}
 const rAF = useRAF(render)
 
-// 获取浏览器刷新率，返回刷新率fps及步进倍率(相较于60Hz)
-rAF.getFps().then(res => {
-  stepRate.value = res.stepRate
+// 获取浏览器刷新率，返回刷新率fps、步进倍率stepRate(相较于60Hz)
+rAF.getFps().then(({ fps, stepRate }) => {
+  stepRate.value = stepRate
   // 开始动画，执行 `render` 函数
   rAF.begin()
 })
-// 停止动画
+
+// 手动停止动画
 rAF.stop()
 ```
