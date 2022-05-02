@@ -59,7 +59,7 @@ api.setAxiosHeaders({ ...headers })
 const userId = 1
 api.getUsers$Books(userId, { params: { page: 1, size: 10 })
 
-// _ 保持_后的大写字母不变(驼峰命名)
+// _ 保持_后的大写字母不变(驼峰命名)，__代替_
 // GET /users/groupQuery =>
 api.getUsersGroup_Query({ params: { page: 1, size: 10 })
 

@@ -14,6 +14,7 @@ api.setFetchHeaders({
 })
 
 const getData = () => {
+  // getSystemDictDataTypeEnterprise__scale
   api.getApiV1DataLabel_GroupQuery({
     params: {
       current: 1,

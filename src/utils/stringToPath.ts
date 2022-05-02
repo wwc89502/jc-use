@@ -10,6 +10,8 @@ export default function (prop: string) {
       .map((item) => {
         const newItem = item
           .toLowerCase()
+          .split('__')
+          .join('~')
           .split('_')
           .map((cItem, cIndex) => {
             if (cIndex === 0) {
@@ -18,7 +20,9 @@ export default function (prop: string) {
               return cItem.slice(0, 1).toUpperCase() + cItem.slice(1);
             }
           })
-          .join('');
+          .join('')
+          .split('~')
+          .join('_')
         return newItem;
       })
       .join('/')
