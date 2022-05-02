@@ -22,7 +22,7 @@ export default function (prop: string) {
           })
           .join('')
           .split('~')
-          .join('_')
+          .join('_');
         return newItem;
       })
       .join('/')
