@@ -5,27 +5,13 @@ export default function (prop: string) {
     '/' +
     prop
       .substring(method.length)
-      .replace(/([a-z0-9])([A-Z])/g, '$1/$2')
+      .replace(/_{2}/g, '~')
+      .replace(/([a-z0-9~])([A-Z])/g, '$1/$2')
       .split('/')
-      .map((item) => {
-        const newItem = item
-          .toLowerCase()
-          .split('__')
-          .join('~')
-          .split('_')
-          .map((cItem, cIndex) => {
-            if (cIndex === 0) {
-              return cItem;
-            } else {
-              return cItem.slice(0, 1).toUpperCase() + cItem.slice(1);
-            }
-          })
-          .join('')
-          .split('~')
-          .join('_');
-        return newItem;
-      })
+      .map((item) => item.slice(0, 1).toLocaleLowerCase() + item.slice(1))
       .join('/')
+      .replace(/_/g, '')
+      .replace(/~/g, '_')
       .replace(/\$/g, '/$/');
   if (path.lastIndexOf('/') === path.length - 1) path = path.slice(0, -1);
   return {
