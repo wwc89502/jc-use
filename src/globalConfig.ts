@@ -1,8 +1,8 @@
 interface GlobalConfig {
   baseURL: string;
-  apiDict: ProxyHandler<object>;
-  axiosHeaders: ProxyHandler<object>;
-  fetchHeaders: ProxyHandler<object>;
+  apiDict: any;
+  axiosHeaders: any;
+  fetchHeaders: any;
   [key: string]: any;
 }
 

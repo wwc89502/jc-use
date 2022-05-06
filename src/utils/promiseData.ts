@@ -10,7 +10,8 @@ export default function (resData: any, resolve: any, reject: any) {
     }
   } else {
     const msg: string = resData[message];
-    if (msg && !noAllowCodes.includes(resData[code])) errorMsgHandle(msg);
+    const status: string = resData[code];
+    if (!noAllowCodes.includes(resData[code])) errorMsgHandle(msg || `接口错误 ${status}`);
     reject(resData);
   }
 }

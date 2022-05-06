@@ -1,7 +1,9 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from "axios";
 import stringToPath from './utils/stringToPath';
 import promiseData from './utils/promiseData';
 import { globalConfig } from './globalConfig';
+// @ts-ignore
+import qs from 'qs';
 
 /**
  * @description 设置请求头
@@ -27,7 +29,7 @@ export function useAxios() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, axiosHeaders } = globalConfig;
+        const { baseURL, axiosHeaders, apiDict } = globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {
@@ -35,16 +37,21 @@ export function useAxios() {
           };
         } else if (['get', 'post', 'put', 'patch', 'delete'].includes(method)) {
           return (...args: any[]) => {
-            const argsShift = args.shift();
-            const url = path.replace(/\$/g, () => argsShift);
-            const options: ObjectAny = argsShift || {};
+            const url = path.replace(/\$/g, () => args[0]);
+            const options: ObjectAny = url === path ? args[0] || {} : args[1] || {};
+            if (['post', 'put', 'patch', 'delete'].includes(method) && options.useForm) {
+              options.data = qs.stringify(options.data);
+            }
             return new Promise((resolve: any, reject: any) => {
+              let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
+              if (!options.useForm) contentTypeHeaders = {}
               const config: ObjectAny = {
                 baseURL,
                 method,
                 url,
                 ...options,
                 headers: {
+                  ...contentTypeHeaders,
                   ...axiosHeaders,
                   ...options.headers,
                 },
@@ -58,8 +65,13 @@ export function useAxios() {
                     reject(res);
                   }
                 })
-                .catch((err) => {
-                  reject(err);
+                .catch((err: AxiosError) => {
+                  const error: any = err.toJSON()
+                  reject({
+                    message: error.message,
+                    status: error.status
+                  });
+                  apiDict.errorMsgHandle(error.message)
                 });
             });
           };

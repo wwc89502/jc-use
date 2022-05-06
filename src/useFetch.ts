@@ -1,7 +1,8 @@
-import objectToQueryString from './utils/objectToQueryString';
 import stringToPath from './utils/stringToPath';
 import promiseData from './utils/promiseData';
 import { globalConfig } from './globalConfig';
+// @ts-ignore
+import qs from 'qs';
 
 /**
  * @description 设置请求头
@@ -27,7 +28,7 @@ export function useFetch() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, fetchHeaders } = globalConfig;
+        const { baseURL, fetchHeaders, apiDict } = globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {
@@ -35,18 +36,24 @@ export function useFetch() {
           };
         } else if (['get', 'post', 'put', 'patch', 'delete'].includes(method)) {
           return (...args: any[]) => {
-            const argsShift = args.shift();
-            const url = path.replace(/\$/g, () => argsShift);
-            const options: ObjectAny = argsShift || {};
+            const url = path.replace(/\$/g, () => args[0]);
+            const options: ObjectAny = url === path ? args[0] || {} : args[1] || {};
             let queryString = '';
-            if (method === 'get') queryString = objectToQueryString(options.params);
-            if (method === 'post' && !options.body) options.body = JSON.stringify(options.data);
+            if (method === 'get') queryString = options.params ? `?${qs.stringify(options.params)}` : '';
+            if (['post', 'put', 'patch', 'delete'].includes(method) && !options.body) {
+              if (options.useForm) options.body = qs.stringify(options.data);
+              else if (options.useUpload) options.body = options.data;
+              else options.body = JSON.stringify(options.data);
+            }
             function _fetch() {
               return new Promise((resolve: any, reject: any) => {
+                let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
+                if (!options.useForm) contentTypeHeaders = {}
                 fetch(`${baseURL}${url}${queryString}`, {
                   method,
                   ...options,
                   headers: {
+                    ...contentTypeHeaders,
                     ...fetchHeaders,
                     ...options.headers,
                   },
@@ -55,10 +62,12 @@ export function useFetch() {
                     if ([200].includes(res.status)) {
                       resolve(res.json());
                     } else {
+                      apiDict.errorMsgHandle(`接口错误 ${res.status}`)
                       reject(res);
                     }
                   })
                   .catch((err) => {
+                    apiDict.errorMsgHandle(err.message)
                     reject(err);
                   });
               });

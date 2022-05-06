@@ -47,6 +47,10 @@ console.log(globalConfig.baseURL)
 > 使用Axios发送http请求
 >
 > api.apiString([$,] config: {})
+> 
+> config 中设置 `useForm` 为 `true`  可以把`post`, `put`, `patch`, `delete`请求改为表单提交，默认为 `false`。
+> 
+> config 中设置 `useUpload` 为 `true` 可以通过 `FormData` 对象上传文件，默认为 `false`。
 
 ```js
 const api = useAxios()
@@ -57,14 +61,29 @@ api.setAxiosHeaders({ ...headers })
 // $ 替换path中的参数
 // GET /users/{userId}/books =>
 const userId = 1
-api.getUsers$Books(userId, { params: { page: 1, size: 10 })
+api.getUsers$Books(userId, { params: { page: 1, size: 10 } })
 
-// _ 保持_后的大写字母不变(驼峰命名)，__代替_
+// 使用_保持其后的大写字母或_不变，即_S代替S, __代替_
 // GET /users/groupQuery =>
-api.getUsersGroup_Query({ params: { page: 1, size: 10 })
+api.getUsersGroup_Query({ params: { page: 1, size: 10 } })
 
 // POST /users =>
 api.postUsers({ data: { name: 'jc', age: 18 } })
+
+// POST 表单 /users =>
+api.postUsers({
+  data: { name: 'jc', age: 18 },
+  useForm: true
+})
+
+// POST 文件上传 /users =>
+const data = new FormData()
+const file = HTMLInputElement.files[0]
+data.append('file', file)
+api.postCommonUploadAttachment({
+  data,
+  useUpload: true
+})
 ```
 
 
