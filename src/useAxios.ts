@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import stringToPath from './utils/stringToPath';
 import promiseData from './utils/promiseData';
 import { globalConfig } from './globalConfig';
@@ -42,10 +42,10 @@ export function useAxios() {
             if (['post', 'put', 'patch', 'delete'].includes(method) && options.useForm) {
               options.data = qs.stringify(options.data);
             }
-            options.timeout = options.timeout || 30000
+            options.timeout = options.timeout || 30000;
             return new Promise((resolve: any, reject: any) => {
               let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
-              if (!options.useForm) contentTypeHeaders = {}
+              if (!options.useForm) contentTypeHeaders = {};
               const config: ObjectAny = {
                 baseURL,
                 method,
@@ -67,12 +67,13 @@ export function useAxios() {
                   }
                 })
                 .catch((err: AxiosError) => {
-                  const error: any = err.toJSON()
-                  if (!apiDict.noAllowCodes.includes(error.status)) apiDict.errorMsgHandle(error.message || `接口错误 ${error.status}`, error.status);
-                  else apiDict.noAllowHandle(error.message || `接口错误 ${error.status}`)
+                  const error: any = err.toJSON();
+                  if (!apiDict.noAllowCodes.includes(error.status))
+                    apiDict.errorMsgHandle(error.message || `接口错误 ${error.status}`, error.status);
+                  else apiDict.noAllowHandle(error.message || `接口错误 ${error.status}`);
                   reject({
                     message: error.message,
-                    status: error.status
+                    status: error.status,
                   });
                 });
             });
