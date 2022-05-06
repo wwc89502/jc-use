@@ -32,9 +32,13 @@ globalConfig.setData({
     data: 'data', // 接口返回数据的字段名
     message: 'msg', // 接口返回报错信息的字段名
     // 请求失败时的回调
-    errorMsgHandle: (msg: string) => {
-      console.error(msg)
-    }
+    errorMsgHandle: (msg: string, status: number | string) => {
+      console.error(msg, status);
+    },
+    // 无接口请求权限时的回调
+    noAllowHandle: (msg: string) => {
+      console.error(msg);
+    },
   }
 })
 console.log(globalConfig.baseURL)
@@ -47,10 +51,16 @@ console.log(globalConfig.baseURL)
 > 使用Axios发送http请求
 >
 > api.apiString([$,] config: {})
-> 
-> config 中设置 `useForm` 为 `true`  可以把`post`, `put`, `patch`, `delete`请求改为表单提交，默认为 `false`。
-> 
-> config 中设置 `useUpload` 为 `true` 可以通过 `FormData` 对象上传文件，默认为 `false`。
+
+###### config 
+
+- params GET请求参数，json格式
+- data POST请求参数，json格式
+- useForm 是否使用表单提交， 把`post`, `put`, `patch`, `delete`请求改为表单提交，默认为 `false`。
+- useUpload 是否使用表单上传提交， 可以通过 `FormData` 对象上传文件，默认为 `false`。
+- timeout 超时时间，默认为 `30000`。
+- headers 请求头
+- baseURL 不使用globalConfig设置的baseURL，单独指定baseURL
 
 ```js
 const api = useAxios()

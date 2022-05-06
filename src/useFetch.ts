@@ -45,12 +45,23 @@ export function useFetch() {
               else if (options.useUpload) options.body = options.data;
               else options.body = JSON.stringify(options.data);
             }
+            options.timeout = options.timeout || 30000
             function _fetch() {
-              return new Promise((resolve: any, reject: any) => {
+              let controller = new AbortController();
+              let signal = controller.signal;
+
+              const timeoutPromise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  controller.abort();
+                  resolve(new Response(null, { status: 408, statusText: `timeout of ${options.timeout}ms exceeded` }));
+                }, options.timeout);
+              });
+              const requestPromise = new Promise((resolve: any, reject: any) => {
                 let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 if (!options.useForm) contentTypeHeaders = {}
-                fetch(`${baseURL}${url}${queryString}`, {
+                fetch(`${options.baseURL || baseURL}${url}${queryString}`, {
                   method,
+                  signal,
                   ...options,
                   headers: {
                     ...contentTypeHeaders,
@@ -58,19 +69,25 @@ export function useFetch() {
                     ...options.headers,
                   },
                 })
-                  .then((res: Response) => {
-                    if ([200].includes(res.status)) {
-                      resolve(res.json());
+                  .then(async (res: Response) => {
+                    const resData = await res.json()
+                    if ([200].includes(resData[apiDict.code] || res.status)) {
+                      resolve(resData);
                     } else {
-                      apiDict.errorMsgHandle(`接口错误 ${res.status}`)
+                      if (!apiDict.noAllowCodes.includes(resData[apiDict.code] || res.status)) apiDict.errorMsgHandle(resData[apiDict.message] || `接口错误 ${resData[apiDict.code] || res.status}`, resData[apiDict.code] || res.status);
+                      else apiDict.noAllowHandle(resData[apiDict.message] || `接口错误 ${resData[apiDict.code] || res.status}`)
                       reject(res);
                     }
                   })
-                  .catch((err) => {
-                    apiDict.errorMsgHandle(err.message)
+                  .catch(async (err) => {
+                    if (err.message !== 'The user aborted a request.') {
+                      apiDict.errorMsgHandle(err.message, '| 出现此错误一般为接口404或Fetch方法调用有问题')
+                    }
                     reject(err);
                   });
               });
+
+              return Promise.race([requestPromise, timeoutPromise])
             }
             return new Promise((resolve: any, reject: any) => {
               _fetch()
@@ -78,7 +95,7 @@ export function useFetch() {
                   promiseData(resData, resolve, reject);
                 })
                 .catch((err) => {
-                  reject(err);
+                  reject(err)
                 });
             });
           };

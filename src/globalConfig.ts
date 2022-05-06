@@ -17,7 +17,11 @@ const globalConfigValue: GlobalConfig = Object.preventExtensions({
     data: 'data', // 接口返回数据的字段名
     message: 'msg', // 接口返回报错信息的字段名
     // 请求失败时的回调
-    errorMsgHandle: (msg: any) => {
+    errorMsgHandle: (msg: string, status: number | string) => {
+      console.error(msg, status);
+    },
+    // 无接口请求权限时的回调
+    noAllowHandle: (msg: string) => {
       console.error(msg);
     },
   }),
