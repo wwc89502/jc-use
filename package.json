@@ -1,6 +1,6 @@
 {
   "name": "jc-use",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "使用 useHooks 的方式处理问题",
   "main": "lib/index.js",
   "scripts": {
