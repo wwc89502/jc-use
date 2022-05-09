@@ -28,7 +28,8 @@ export function useFetch() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, fetchHeaders, apiDict } = globalConfig;
+        const { baseURL, fetchHeaders, apiDict, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle } =
+          globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {
@@ -45,16 +46,24 @@ export function useFetch() {
               else if (options.useUpload) options.body = options.data;
               else options.body = JSON.stringify(options.data);
             }
-            options.timeout = options.timeout || 30000;
+            let timeout = options.timeout || requestTimeout;
+            if (isNaN(timeout)) {
+              timeout = 30000;
+              console.warn('timeout should be a number type, has been changed to 30000!');
+            }
             function _fetch() {
               const controller = new AbortController();
               const signal = controller.signal;
 
               const timeoutPromise = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  controller.abort();
-                  resolve(new Response(null, { status: 408, statusText: `timeout of ${options.timeout}ms exceeded` }));
-                }, options.timeout);
+                if (timeout === 0) {
+                  resolve({});
+                } else {
+                  setTimeout(() => {
+                    controller.abort();
+                    resolve(new Response(null, { status: 408, statusText: `timeout of ${timeout}ms exceeded` }));
+                  }, timeout);
+                }
               });
               const requestPromise = new Promise((resolve: any, reject: any) => {
                 let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
@@ -74,21 +83,18 @@ export function useFetch() {
                     if ([200].includes(resData[apiDict.code] || res.status)) {
                       resolve(resData);
                     } else {
-                      if (!apiDict.noAllowCodes.includes(resData[apiDict.code] || res.status))
-                        apiDict.errorMsgHandle(
+                      if (!noAllowCodes.includes(resData[apiDict.code] || res.status))
+                        errorMsgHandle(
                           resData[apiDict.message] || `接口错误 ${resData[apiDict.code] || res.status}`,
                           resData[apiDict.code] || res.status,
                         );
-                      else
-                        apiDict.noAllowHandle(
-                          resData[apiDict.message] || `接口错误 ${resData[apiDict.code] || res.status}`,
-                        );
+                      else noAllowHandle(resData[apiDict.message] || `接口错误 ${resData[apiDict.code] || res.status}`);
                       reject(res);
                     }
                   })
                   .catch(async (err) => {
                     if (err.message !== 'The user aborted a request.') {
-                      apiDict.errorMsgHandle(err.message, '| 出现此错误一般为接口404或Fetch方法调用有问题');
+                      errorMsgHandle(err.message, '| 出现此错误一般为接口404或Fetch方法调用有问题');
                     }
                     reject(err);
                   });

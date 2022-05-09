@@ -1,8 +1,13 @@
 interface GlobalConfig {
   baseURL: string;
+  axiosHeaders: object;
+  fetchHeaders: object;
+  successCodes: any[];
+  noAllowCodes: any[];
+  requestTimeout: number;
   apiDict: any;
-  axiosHeaders: any;
-  fetchHeaders: any;
+  errorMsgHandle: any;
+  noAllowHandle: any;
   [key: string]: any;
 }
 
@@ -10,21 +15,22 @@ const globalConfigValue: GlobalConfig = Object.preventExtensions({
   baseURL: '',
   axiosHeaders: freezyObj({}),
   fetchHeaders: freezyObj({}),
+  successCodes: [200], // 接口请求成功的状态码集合
+  noAllowCodes: [401], // 无接口请求权限的状态码集合
+  requestTimeout: 30000, // 接口超时时间
   apiDict: freezyObj({
     code: 'code', // 接口返回的状态码的字段名
-    successCodes: [200], // 接口请求成功的状态码集合
-    noAllowCodes: [401], // 无接口请求权限的状态码集合
     data: 'data', // 接口返回数据的字段名
     message: 'msg', // 接口返回报错信息的字段名
-    // 请求失败时的回调
-    errorMsgHandle: (msg: string, status: number | string) => {
-      console.error(msg, status);
-    },
-    // 无接口请求权限时的回调
-    noAllowHandle: (msg: string) => {
-      console.error(msg);
-    },
   }),
+  // 请求失败时的回调
+  errorMsgHandle: (msg: string, status: number | string) => {
+    console.error(msg, status);
+  },
+  // 无接口请求权限时的回调
+  noAllowHandle: (msg: string) => {
+    console.error(msg);
+  },
 });
 function freezyObj(obj: object) {
   return new Proxy(obj, {

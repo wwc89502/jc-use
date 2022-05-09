@@ -25,21 +25,22 @@ globalConfig.setData({
   baseURL: '',
   axiosHeaders: {},
   fetchHeaders: {},
+  successCodes: [200], // 接口请求成功的状态码集合
+  noAllowCodes: [401], // 无接口请求权限的状态码集合
+  requestTimeout: 30000, // 接口超时时间 0为不设置超时时间
   apiDict: {
     code: 'code', // 接口返回的状态码的字段名
-    successCodes: [200], // 接口请求成功的状态码集合
-    noAllowCodes: [401], // 无接口请求权限的状态码集合
     data: 'data', // 接口返回数据的字段名
     message: 'msg', // 接口返回报错信息的字段名
-    // 请求失败时的回调
-    errorMsgHandle: (msg: string, status: number | string) => {
-      console.error(msg, status);
-    },
-    // 无接口请求权限时的回调
-    noAllowHandle: (msg: string) => {
-      console.error(msg);
-    },
-  }
+  },
+  // 请求失败时的回调
+  errorMsgHandle: (msg: string, status: number | string) => {
+    console.error(msg, status);
+  },
+  // 无接口请求权限时的回调
+  noAllowHandle: (msg: string) => {
+    console.error(msg);
+  },
 })
 console.log(globalConfig.baseURL)
 ```
@@ -58,7 +59,7 @@ console.log(globalConfig.baseURL)
 - data POST请求参数，json格式
 - useForm 是否使用表单提交， 把`post`, `put`, `patch`, `delete`请求改为表单提交，默认为 `false`。
 - useUpload 是否使用表单上传提交， 可以通过 `FormData` 对象上传文件，默认为 `false`。
-- timeout 超时时间，默认为 `30000`。
+- timeout 超时时间，默认为 `globalConfig` 中的 `timeout`。
 - headers 请求头
 - baseURL 不使用globalConfig设置的baseURL，单独指定baseURL
 

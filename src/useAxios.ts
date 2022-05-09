@@ -29,7 +29,7 @@ export function useAxios() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, axiosHeaders, apiDict } = globalConfig;
+        const { baseURL, axiosHeaders, requestTimeout, errorMsgHandle, noAllowHandle, noAllowCodes } = globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {
@@ -42,13 +42,18 @@ export function useAxios() {
             if (['post', 'put', 'patch', 'delete'].includes(method) && options.useForm) {
               options.data = qs.stringify(options.data);
             }
-            options.timeout = options.timeout || 30000;
+            let timeout = options.timeout || requestTimeout;
+            if (isNaN(timeout)) {
+              timeout = 30000;
+              console.warn('timeout 应该是数字');
+            }
             return new Promise((resolve: any, reject: any) => {
               let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
               if (!options.useForm) contentTypeHeaders = {};
               const config: ObjectAny = {
                 baseURL,
                 method,
+                timeout,
                 url,
                 ...options,
                 headers: {
@@ -68,9 +73,9 @@ export function useAxios() {
                 })
                 .catch((err: AxiosError) => {
                   const error: any = err.toJSON();
-                  if (!apiDict.noAllowCodes.includes(error.status))
-                    apiDict.errorMsgHandle(error.message || `接口错误 ${error.status}`, error.status);
-                  else apiDict.noAllowHandle(error.message || `接口错误 ${error.status}`);
+                  if (!noAllowCodes.includes(error.status))
+                    errorMsgHandle(error.message || `接口错误 ${error.status}`, error.status);
+                  else noAllowHandle(error.message || `接口错误 ${error.status}`);
                   reject({
                     message: error.message,
                     status: error.status,
