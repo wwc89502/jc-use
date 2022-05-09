@@ -28,7 +28,7 @@ export function useFetch() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, fetchHeaders, apiDict, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle, withCredentials } =
+        const { baseURL, fetchHeaders, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle, withCredentials } =
           globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
@@ -69,7 +69,7 @@ export function useFetch() {
                 let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 if (!options.useForm) contentTypeHeaders = {};
                 let credentials: RequestCredentials = 'same-origin';
-                if (options.withCredentials || withCredentials) credentials = 'include'
+                if (options.withCredentials || withCredentials) credentials = 'include';
                 fetch(`${options.baseURL || baseURL}${url}${queryString}`, {
                   method,
                   ...options,
@@ -81,21 +81,11 @@ export function useFetch() {
                     ...options.headers,
                   },
                 })
-                  .then(response => response.json())
+                  .then((response) => response.json())
                   .then((resData: any) => {
-                    if ([200].includes(resData[apiDict.code])) {
-                      resolve(resData);
-                    } else {
-                      if (!noAllowCodes.includes(resData[apiDict.code]))
-                        errorMsgHandle(
-                          resData[apiDict.message] || `接口错误 ${resData[apiDict.code]}`,
-                          resData[apiDict.code],
-                        );
-                      else noAllowHandle(resData[apiDict.message] || `接口错误 ${resData[apiDict.code]}`);
-                      reject(resData);
-                    }
+                    resolve(resData);
                   })
-                  .catch(async (err) => {
+                  .catch((err) => {
                     reject(err);
                   });
               });
@@ -107,8 +97,14 @@ export function useFetch() {
                 .then((resData: any) => {
                   promiseData(resData, resolve, reject);
                 })
-                .catch((err) => {
-                  reject(err);
+                .catch((error) => {
+                  if (!noAllowCodes.includes(error.status))
+                    errorMsgHandle(error.message || `接口错误 ${error.status}`, error.status || '');
+                  else noAllowHandle(error.message || `接口错误 ${error.status}`);
+                  reject({
+                    message: error.message,
+                    status: error.status,
+                  });
                 });
             });
           };

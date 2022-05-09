@@ -29,7 +29,8 @@ export function useAxios() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, axiosHeaders, requestTimeout, errorMsgHandle, noAllowHandle, noAllowCodes, withCredentials } = globalConfig;
+        const { baseURL, axiosHeaders, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle, withCredentials } =
+          globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {
@@ -45,7 +46,7 @@ export function useAxios() {
             let timeout = options.timeout || requestTimeout;
             if (isNaN(timeout)) {
               timeout = 30000;
-              console.warn('timeout 应该是数字');
+              console.warn('timeout should be a number type, has been changed to 30000!');
             }
             return new Promise((resolve: any, reject: any) => {
               let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
@@ -64,13 +65,9 @@ export function useAxios() {
                 },
               };
               axios(config)
-                .then((res: AxiosResponse) => {
-                  if ([200].includes(res.status)) {
-                    const resData = res.data;
-                    promiseData(resData, resolve, reject);
-                  } else {
-                    reject(res);
-                  }
+                .then((response: AxiosResponse) => response.data)
+                .then((resData) => {
+                  promiseData(resData, resolve, reject);
                 })
                 .catch((err: AxiosError) => {
                   const error: any = err.toJSON();
