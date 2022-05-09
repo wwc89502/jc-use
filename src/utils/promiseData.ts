@@ -11,7 +11,7 @@ export default function (resData: any, resolve: any, reject: any) {
   } else {
     const msg: string = resData[apiDict.message] || resData.statusText;
     const status: string = resData[apiDict.code];
-    if (!noAllowCodes.includes(resData[apiDict.code])) errorMsgHandle(msg || `接口错误 ${status}`, status);
+    if (!noAllowCodes.includes(resData[apiDict.code])) errorMsgHandle(msg || `接口错误 ${status}`, status || '');
     else noAllowHandle(msg || `接口错误 ${status}`);
     reject(resData);
   }

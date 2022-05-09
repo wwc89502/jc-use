@@ -81,24 +81,21 @@ export function useFetch() {
                     ...options.headers,
                   },
                 })
-                  .then(async (res: Response) => {
-                    const resData = await res.json();
-                    if ([200].includes(resData[apiDict.code] || res.status)) {
+                  .then(response => response.json())
+                  .then((resData: any) => {
+                    if ([200].includes(resData[apiDict.code])) {
                       resolve(resData);
                     } else {
-                      if (!noAllowCodes.includes(resData[apiDict.code] || res.status))
+                      if (!noAllowCodes.includes(resData[apiDict.code]))
                         errorMsgHandle(
-                          resData[apiDict.message] || `接口错误 ${resData[apiDict.code] || res.status}`,
-                          resData[apiDict.code] || res.status,
+                          resData[apiDict.message] || `接口错误 ${resData[apiDict.code]}`,
+                          resData[apiDict.code],
                         );
-                      else noAllowHandle(resData[apiDict.message] || `接口错误 ${resData[apiDict.code] || res.status}`);
-                      reject(res);
+                      else noAllowHandle(resData[apiDict.message] || `接口错误 ${resData[apiDict.code]}`);
+                      reject(resData);
                     }
                   })
                   .catch(async (err) => {
-                    if (err.message !== 'The user aborted a request.') {
-                      errorMsgHandle(err.message, '| 出现此错误一般为接口404或Fetch方法调用有问题');
-                    }
                     reject(err);
                   });
               });

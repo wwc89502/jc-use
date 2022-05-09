@@ -63,11 +63,6 @@ export function useAxios() {
                   ...options.headers,
                 },
               };
-              const _config = {
-                // `withCredentials` indicates whether or not cross-site Access-Control requests
-                // should be made using credentials
-                withCredentials: false, // default
-              }
               axios(config)
                 .then((res: AxiosResponse) => {
                   if ([200].includes(res.status)) {
@@ -80,7 +75,7 @@ export function useAxios() {
                 .catch((err: AxiosError) => {
                   const error: any = err.toJSON();
                   if (!noAllowCodes.includes(error.status))
-                    errorMsgHandle(error.message || `接口错误 ${error.status}`, error.status);
+                    errorMsgHandle(error.message || `接口错误 ${error.status}`, error.status || '');
                   else noAllowHandle(error.message || `接口错误 ${error.status}`);
                   reject({
                     message: error.message,
