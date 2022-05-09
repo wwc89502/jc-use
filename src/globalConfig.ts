@@ -2,6 +2,7 @@ interface GlobalConfig {
   baseURL: string;
   axiosHeaders: object;
   fetchHeaders: object;
+  withCredentials: boolean;
   successCodes: any[];
   noAllowCodes: any[];
   requestTimeout: number;
@@ -15,6 +16,7 @@ const globalConfigValue: GlobalConfig = Object.preventExtensions({
   baseURL: '',
   axiosHeaders: freezyObj({}),
   fetchHeaders: freezyObj({}),
+  withCredentials: false, // 指示是否应使用凭据进行跨站点访问控制请求
   successCodes: [200], // 接口请求成功的状态码集合
   noAllowCodes: [401], // 无接口请求权限的状态码集合
   requestTimeout: 30000, // 接口超时时间

@@ -28,7 +28,7 @@ export function useFetch() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, fetchHeaders, apiDict, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle } =
+        const { baseURL, fetchHeaders, apiDict, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle, withCredentials } =
           globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
@@ -68,10 +68,13 @@ export function useFetch() {
               const requestPromise = new Promise((resolve: any, reject: any) => {
                 let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
                 if (!options.useForm) contentTypeHeaders = {};
+                let credentials: RequestCredentials = 'same-origin';
+                if (options.withCredentials || withCredentials) credentials = 'include'
                 fetch(`${options.baseURL || baseURL}${url}${queryString}`, {
                   method,
-                  signal,
                   ...options,
+                  signal,
+                  credentials,
                   headers: {
                     ...contentTypeHeaders,
                     ...fetchHeaders,

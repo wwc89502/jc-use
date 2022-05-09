@@ -29,7 +29,7 @@ export function useAxios() {
     },
     {
       get(target: any, prop: string) {
-        const { baseURL, axiosHeaders, requestTimeout, errorMsgHandle, noAllowHandle, noAllowCodes } = globalConfig;
+        const { baseURL, axiosHeaders, requestTimeout, errorMsgHandle, noAllowHandle, noAllowCodes, withCredentials } = globalConfig;
         const { method, path } = stringToPath(prop);
         if (!!target[prop]) {
           return (...args: any[]) => {
@@ -51,17 +51,23 @@ export function useAxios() {
               let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
               if (!options.useForm) contentTypeHeaders = {};
               const config: ObjectAny = {
-                baseURL,
                 method,
-                timeout,
                 url,
                 ...options,
+                baseURL: options.baseURL || baseURL,
+                timeout,
+                withCredentials: options.withCredentials || withCredentials,
                 headers: {
                   ...contentTypeHeaders,
                   ...axiosHeaders,
                   ...options.headers,
                 },
               };
+              const _config = {
+                // `withCredentials` indicates whether or not cross-site Access-Control requests
+                // should be made using credentials
+                withCredentials: false, // default
+              }
               axios(config)
                 .then((res: AxiosResponse) => {
                   if ([200].includes(res.status)) {
