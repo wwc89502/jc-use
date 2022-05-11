@@ -1,31 +1,41 @@
-/**
- * @description 轮询
- * @usage poll.begin(pollHandle, wait)
- * @usage poll.stop()
- */
-export function usePoll() {
-  let pollTimer: any = null;
+export type Callback = () => void;
+
+export interface UsePoll {
   /**
    * @description 停止轮询
    */
-  const stop = () => {
-    clearTimeout(pollTimer);
-    pollTimer = null;
-  };
+  stop(): void;
   /**
    * @description 开始轮询
-   * @param pollHandle 需要轮询的函数
-   * @param wait 间隔时间
+   * @param pollHandle {Callback} 需要轮询的函数
+   * @param waitTime {number} 间隔时间
    */
-  const begin = (pollHandle: any, wait: number = 1000) => {
-    if (pollTimer) return false;
-    (async function doPoll() {
+  begin(pollHandle: Callback, waitTime?: number): void;
+}
+
+/**
+ * @description 轮询
+ * @example
+ * const poll = usePoll()
+ * poll.begin(pollHandle, waitTime)
+ * poll.stop()
+ */
+export function usePoll(): UsePoll {
+  let pollTimer: number | null = null;
+  function stop() {
+    clearTimeout(pollTimer as number);
+    pollTimer = null;
+  }
+  function begin(pollHandle: Callback, waitTime: number = 1000) {
+    if (pollTimer) return;
+    (async function doPoll(): Promise<void> {
       await pollHandle?.();
-      pollTimer = setTimeout(doPoll, wait);
+      pollTimer = setTimeout(doPoll, waitTime);
     })();
-  };
-  return {
+  }
+  const poll: UsePoll = {
     begin,
     stop,
   };
+  return poll;
 }
