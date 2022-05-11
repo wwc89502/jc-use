@@ -1,30 +1,39 @@
+interface ApiDict {
+  code: string;
+  data: string;
+  message: string;
+}
+interface AnyObject {
+  [key: string]: any;
+}
 interface GlobalConfig {
   baseURL: string;
-  axiosHeaders: object;
-  fetchHeaders: object;
+  axiosHeaders: ProxyHandler<object>;
+  fetchHeaders: ProxyHandler<object>;
   withCredentials: boolean;
-  successCodes: any[];
-  noAllowCodes: any[];
+  successCodes: (number | string)[];
+  noAllowCodes: (number | string)[];
   requestTimeout: number;
-  apiDict: any;
-  errorMsgHandle: any;
-  noAllowHandle: any;
+  apiDict: ProxyHandler<object>;
+  errorMsgHandle(msg: string, status: number | string): void;
+  noAllowHandle(msg: string): void;
   [key: string]: any;
 }
 
+const apiDict: ApiDict = {
+  code: 'code', // 接口返回的状态码的字段名
+  data: 'data', // 接口返回数据的字段名
+  message: 'msg', // 接口返回报错信息的字段名
+};
 const globalConfigValue: GlobalConfig = Object.preventExtensions({
-  baseURL: '',
-  axiosHeaders: freezyObj({}),
-  fetchHeaders: freezyObj({}),
+  baseURL: '', // 基础路径
+  axiosHeaders: freezyObj({}), // useAxios 请求头
+  fetchHeaders: freezyObj({}), // useFetch 请求头
   withCredentials: false, // 指示是否应使用凭据进行跨站点访问控制请求
   successCodes: [200], // 接口请求成功的状态码集合
   noAllowCodes: [401], // 无接口请求权限的状态码集合
   requestTimeout: 30000, // 接口超时时间
-  apiDict: freezyObj({
-    code: 'code', // 接口返回的状态码的字段名
-    data: 'data', // 接口返回数据的字段名
-    message: 'msg', // 接口返回报错信息的字段名
-  }),
+  apiDict: freezyObj(apiDict), // 接口返回的数据对应字段的字典
   // 请求失败时的回调
   errorMsgHandle: (msg: string, status: number | string) => {
     console.error(msg, status);
@@ -34,16 +43,21 @@ const globalConfigValue: GlobalConfig = Object.preventExtensions({
     console.error(msg);
   },
 });
-function freezyObj(obj: object) {
+function freezyObj(obj: {}): ProxyHandler<object> {
   return new Proxy(obj, {
-    set(target: GlobalConfig, p: string): any {
+    set(target: AnyObject, p: string): boolean {
       const oldVal = target[p];
       console.error(`${p}修改失败，请使用globalConfig.setData()修改配置`);
       return Reflect.set(target, p, oldVal);
     },
   });
 }
-const setData = (config: any) => {
+
+/**
+ * @description 设置 globalConfig
+ * @param config
+ */
+const setData = (config: GlobalConfig) => {
   for (const valueKey in config) {
     if (Object.prototype.toString.call(config[valueKey]) === '[object Object]') {
       globalConfigValue[valueKey] = freezyObj({
@@ -55,17 +69,17 @@ const setData = (config: any) => {
     }
   }
 };
-export const globalConfig = new Proxy(globalConfigValue, {
-  get(target: GlobalConfig, p: string): any {
+export const globalConfig: GlobalConfig = new Proxy(globalConfigValue, {
+  get(target: GlobalConfig, p: string): (config: GlobalConfig) => void {
     if (p === 'setData') {
-      return (config: object) => {
+      return (config: GlobalConfig): void => {
         setData(config);
       };
     } else {
       return Reflect.get(target, p);
     }
   },
-  set(target: GlobalConfig, p: string): any {
+  set(target: GlobalConfig, p: string): boolean {
     const oldVal = target[p];
     console.error(`${p}修改失败，请使用globalConfig.setData()修改配置`);
     return Reflect.set(target, p, oldVal);

@@ -28,7 +28,7 @@ export type StopMethod = {
   /**
    * @description 停止动画
    */
-  stop(): void
+  stop(): void;
 };
 export type Render = ({ stop }: StopMethod) => void;
 
@@ -47,15 +47,15 @@ export function useRAF(render: Render): UseRAF {
   function stop() {
     cancelAnimationFrame(rAFId as number);
     rAFId = null;
-  };
+  }
   function animLoop() {
     rAFId = requestAnimationFrame(animLoop);
     render({ stop });
-  };
+  }
   function begin() {
     if (rAFId) stop();
     rAFId = requestAnimationFrame(animLoop);
-  };
+  }
   function getFps(): Promise<FpsOpt> {
     let count: number = 0;
     let fpsRAFId: number = 0;
@@ -70,17 +70,17 @@ export function useRAF(render: Render): UseRAF {
         if (count === 20 + 2) {
           const fps20Sum: number = fpsArr.slice(2).reduce((prev: number, curr: number): number => prev + curr);
           const fps: number = Math.round(fps20Sum / 20);
-          const stepRate: number = Math.round(fps / 60 * 100) / 100;
+          const stepRate: number = Math.round((fps / 60) * 100) / 100;
           const fpsOpt: FpsOpt = {
             fps,
             stepRate,
-          }
+          };
           resolve(fpsOpt);
           cancelAnimationFrame(fpsRAFId);
         }
       })(1);
     });
-  };
+  }
   const rAF: UseRAF = {
     begin,
     stop,

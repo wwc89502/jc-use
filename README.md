@@ -22,9 +22,9 @@ import { globalConfig } from 'jc-use'
 
 // default config
 globalConfig.setData({
-  baseURL: '',
-  axiosHeaders: {},
-  fetchHeaders: {},
+  baseURL: '', // 基础路径
+  axiosHeaders: {}, // useAxios 请求头
+  fetchHeaders: {}, // useFetch 请求头
   withCredentials: false, // 指示是否应使用凭据进行跨站点访问控制请求
   successCodes: [200], // 接口请求成功的状态码集合
   noAllowCodes: [401], // 无接口请求权限的状态码集合
@@ -145,7 +145,6 @@ poll.stop()
 >
 
 ```js
-const stepRate = ref(0)
 const render = ({ stop }) => {
   // ...
   if (...) {
@@ -156,12 +155,10 @@ const render = ({ stop }) => {
 }
 const rAF = useRAF(render)
 
-// 获取浏览器刷新率，返回刷新率fps、步进倍率stepRate(相较于60Hz)
-rAF.getFps().then(({ fps, stepRate }) => {
-  stepRate.value = stepRate
-  // 开始动画，执行 `render` 函数
-  rAF.begin()
-})
+// 获取浏览器刷新率，返回每秒传输帧数fps、相较于60FPS的倍率stepRate
+const { fps, stepRate } = await rAF.getFps()
+// 开始动画，执行 `render` 函数
+rAF.begin()
 
 // 手动停止动画
 rAF.stop()
