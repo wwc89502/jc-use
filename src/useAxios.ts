@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import stringToPath from './utils/stringToPath';
 import promiseData from './utils/promiseData';
 import { GlobalConfig, globalConfig } from './globalConfig';
@@ -28,9 +28,16 @@ export function useAxios() {
       setAxiosHeaders,
     },
     {
-      get <T extends ObjectAny, K extends keyof T>(target: T, prop: K) {
-        const { baseURL, axiosHeaders, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle, withCredentials }: GlobalConfig =
-          globalConfig;
+      get<T extends ObjectAny, K extends keyof T>(target: T, prop: K) {
+        const {
+          baseURL,
+          axiosHeaders,
+          noAllowCodes,
+          requestTimeout,
+          errorMsgHandle,
+          noAllowHandle,
+          withCredentials,
+        }: GlobalConfig = globalConfig;
         const { method, path } = stringToPath(prop as string);
         if (target.hasOwnProperty(prop) && typeof target[prop] === 'function') {
           return (...args: any[]) => {

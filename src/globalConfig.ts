@@ -30,7 +30,7 @@ const globalConfigValue: GlobalConfig = Object.preventExtensions({
   successCodes: [200], // 接口请求成功的状态码集合
   noAllowCodes: [401], // 无接口请求权限的状态码集合
   requestTimeout: 30000, // 接口超时时间
-  apiDict: apiDict, // 接口返回的数据对应字段的字典
+  apiDict, // 接口返回的数据对应字段的字典
   // 请求失败时的回调
   errorMsgHandle: (msg: string, status: number | string) => {
     console.error(msg, status);
