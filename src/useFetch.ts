@@ -1,6 +1,6 @@
 import stringToPath from './utils/stringToPath';
 import promiseData from './utils/promiseData';
-import { globalConfig } from './globalConfig';
+import { GlobalConfig, globalConfig } from "./globalConfig";
 // @ts-ignore
 import qs from 'qs';
 
@@ -27,35 +27,36 @@ export function useFetch() {
       setFetchHeaders,
     },
     {
-      get(target: any, prop: string) {
-        const { baseURL, fetchHeaders, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle, withCredentials } =
+      get <T extends ObjectAny, K extends keyof T>(target: T, prop: K) {
+        const { baseURL, fetchHeaders, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle, withCredentials }: GlobalConfig =
           globalConfig;
-        const { method, path } = stringToPath(prop);
-        if (!!target[prop]) {
+        const { method, path } = stringToPath(prop as string);
+        if (target.hasOwnProperty(prop) && typeof target[prop] === 'function') {
           return (...args: any[]) => {
             target[prop](...args);
           };
-        } else if (['get', 'post', 'put', 'patch', 'delete'].includes(method)) {
+        } else if (["get", "post", "put", "patch", "delete"].includes(method)) {
           return (...args: any[]) => {
-            const url = path.replace(/\$/g, () => args[0]);
+            const url: string = path.replace(/\$/g, () => args[0]);
             const options: ObjectAny = url === path ? args[0] || {} : args[1] || {};
-            let queryString = '';
-            if (method === 'get') queryString = options.params ? `?${qs.stringify(options.params)}` : '';
-            if (['post', 'put', 'patch', 'delete'].includes(method) && !options.body) {
+            let queryString: string = "";
+            if (method === "get") queryString = options.params ? `?${qs.stringify(options.params)}` : "";
+            if (["post", "put", "patch", "delete"].includes(method) && !options.body) {
               if (options.useForm) options.body = qs.stringify(options.data);
               else if (options.useUpload) options.body = options.data;
               else options.body = JSON.stringify(options.data);
             }
-            let timeout = options.timeout || requestTimeout;
+            let timeout: number = options.timeout || requestTimeout;
             if (isNaN(timeout)) {
               timeout = 30000;
-              console.warn('timeout should be a number type, has been changed to 30000!');
+              console.warn("timeout should be a number type, has been changed to 30000!");
             }
-            function _fetch() {
-              const controller = new AbortController();
-              const signal = controller.signal;
 
-              const timeoutPromise = new Promise((resolve, reject) => {
+            function _fetch() {
+              const controller: AbortController = new AbortController();
+              const signal: AbortSignal = controller.signal;
+
+              const timeoutPromise: Promise<void> = new Promise((resolve: (cb: any) => void): void => {
                 if (timeout === 0) {
                   resolve({});
                 } else {
@@ -65,11 +66,11 @@ export function useFetch() {
                   }, timeout);
                 }
               });
-              const requestPromise = new Promise((resolve: any, reject: any) => {
-                let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
+              const requestPromise: Promise<void> = new Promise((resolve: (cb: any) => void, reject: (cb: any) => void): void => {
+                let contentTypeHeaders: object = { "Content-Type": "application/x-www-form-urlencoded" };
                 if (!options.useForm) contentTypeHeaders = {};
-                let credentials: RequestCredentials = 'same-origin';
-                if (options.withCredentials || withCredentials) credentials = 'include';
+                let credentials: RequestCredentials = "same-origin";
+                if (options.withCredentials || withCredentials) credentials = "include";
                 fetch(`${options.baseURL || baseURL}${url}${queryString}`, {
                   method,
                   ...options,
@@ -78,10 +79,10 @@ export function useFetch() {
                   headers: {
                     ...contentTypeHeaders,
                     ...fetchHeaders,
-                    ...options.headers,
-                  },
+                    ...options.headers
+                  }
                 })
-                  .then((response) => response.json())
+                  .then((response: Response) => response.json())
                   .then((resData: any) => {
                     resolve(resData);
                   })
@@ -92,18 +93,19 @@ export function useFetch() {
 
               return Promise.race([requestPromise, timeoutPromise]);
             }
-            return new Promise((resolve: any, reject: any) => {
+
+            return new Promise((resolve: (cb: any) => void, reject: (cb: any) => void): void => {
               _fetch()
                 .then((resData: any) => {
                   promiseData(resData, resolve, reject);
                 })
                 .catch((error) => {
                   if (!noAllowCodes.includes(error.status))
-                    errorMsgHandle(error.message || `接口错误 ${error.status}`, error.status || '');
+                    errorMsgHandle(error.message || `接口错误 ${error.status}`, error.status || "");
                   else noAllowHandle(error.message || `接口错误 ${error.status}`);
                   reject({
                     message: error.message,
-                    status: error.status,
+                    status: error.status
                   });
                 });
             });
@@ -111,7 +113,7 @@ export function useFetch() {
         } else {
           return false;
         }
-      },
+      }
     },
   );
 }

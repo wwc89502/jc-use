@@ -1,7 +1,7 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import stringToPath from './utils/stringToPath';
 import promiseData from './utils/promiseData';
-import { globalConfig } from './globalConfig';
+import { GlobalConfig, globalConfig } from './globalConfig';
 // @ts-ignore
 import qs from 'qs';
 
@@ -28,31 +28,31 @@ export function useAxios() {
       setAxiosHeaders,
     },
     {
-      get(target: any, prop: string) {
-        const { baseURL, axiosHeaders, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle, withCredentials } =
+      get <T extends ObjectAny, K extends keyof T>(target: T, prop: K) {
+        const { baseURL, axiosHeaders, noAllowCodes, requestTimeout, errorMsgHandle, noAllowHandle, withCredentials }: GlobalConfig =
           globalConfig;
-        const { method, path } = stringToPath(prop);
-        if (!!target[prop]) {
+        const { method, path } = stringToPath(prop as string);
+        if (target.hasOwnProperty(prop) && typeof target[prop] === 'function') {
           return (...args: any[]) => {
             target[prop](...args);
           };
         } else if (['get', 'post', 'put', 'patch', 'delete'].includes(method)) {
           return (...args: any[]) => {
-            const url = path.replace(/\$/g, () => args[0]);
+            const url: string = path.replace(/\$/g, () => args[0]);
             const options: ObjectAny = url === path ? args[0] || {} : args[1] || {};
             if (['post', 'put', 'patch', 'delete'].includes(method) && options.useForm) {
               options.data = qs.stringify(options.data);
             }
-            let timeout = options.timeout || requestTimeout;
+            let timeout: number = options.timeout || requestTimeout;
             if (isNaN(timeout)) {
               timeout = 30000;
               console.warn('timeout should be a number type, has been changed to 30000!');
             }
-            return new Promise((resolve: any, reject: any) => {
+            return new Promise((resolve: (cb: any) => void, reject: (cb: any) => void): void => {
               let contentTypeHeaders: object = { 'Content-Type': 'application/x-www-form-urlencoded' };
               if (!options.useForm) contentTypeHeaders = {};
-              const config: ObjectAny = {
-                method,
+              const config: AxiosRequestConfig = {
+                method: method as Method,
                 url,
                 ...options,
                 baseURL: options.baseURL || baseURL,

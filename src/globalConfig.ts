@@ -1,12 +1,9 @@
-interface ApiDict {
+export interface ApiDict {
   code: string;
   data: string;
   message: string;
 }
-interface AnyObject {
-  [key: string]: any;
-}
-interface GlobalConfig {
+export interface GlobalConfig {
   baseURL: string;
   axiosHeaders: ProxyHandler<object>;
   fetchHeaders: ProxyHandler<object>;
@@ -14,7 +11,7 @@ interface GlobalConfig {
   successCodes: (number | string)[];
   noAllowCodes: (number | string)[];
   requestTimeout: number;
-  apiDict: ProxyHandler<object>;
+  apiDict: ApiDict;
   errorMsgHandle(msg: string, status: number | string): void;
   noAllowHandle(msg: string): void;
   [key: string]: any;
@@ -33,7 +30,7 @@ const globalConfigValue: GlobalConfig = Object.preventExtensions({
   successCodes: [200], // 接口请求成功的状态码集合
   noAllowCodes: [401], // 无接口请求权限的状态码集合
   requestTimeout: 30000, // 接口超时时间
-  apiDict: freezyObj(apiDict), // 接口返回的数据对应字段的字典
+  apiDict: apiDict, // 接口返回的数据对应字段的字典
   // 请求失败时的回调
   errorMsgHandle: (msg: string, status: number | string) => {
     console.error(msg, status);
@@ -45,19 +42,18 @@ const globalConfigValue: GlobalConfig = Object.preventExtensions({
 });
 function freezyObj(obj: {}): ProxyHandler<object> {
   return new Proxy(obj, {
-    set(target: AnyObject, p: string): boolean {
+    set<T extends object, K extends keyof T>(target: T, p: K): boolean {
       const oldVal = target[p];
       console.error(`${p}修改失败，请使用globalConfig.setData()修改配置`);
       return Reflect.set(target, p, oldVal);
     },
   });
 }
-
 /**
  * @description 设置 globalConfig
  * @param config
  */
-const setData = (config: GlobalConfig) => {
+const setData = <T extends GlobalConfig, K extends keyof T>(config: T) => {
   for (const valueKey in config) {
     if (Object.prototype.toString.call(config[valueKey]) === '[object Object]') {
       globalConfigValue[valueKey] = freezyObj({
